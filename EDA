@@ -1,0 +1,90 @@
+#  Visualise count of fraudulent vs. non-fraudulent transactions
+fraud_counts = df['isFraud'].value_counts()
+fraud_percentages = df['isFraud'].value_counts(normalize=True) * 100
+print("Fraud Counts:")
+print(fraud_counts)
+print("\nFraud Percentages:")
+print(fraud_percentages)
+
+# Visualisation of Fraud and Non Fraud using pie chart
+import matplotlib.pyplot as plt
+fraud_counts = df['isFraud'].value_counts().sort_index()
+labels = ['0 - Non-Fraudulent', '1 - Fraudulent']
+colors = ['lightblue', 'lightgreen']
+#plot
+plt.figure(figsize=(6, 6))
+plt.pie(fraud_counts, labels=labels, autopct='%1.1f%%', startangle=90, colors=colors, explode=(0, 0.1))
+# Title outside the pie chart (at the top)
+plt.title("Fraud vs Non-Fraud Transactions", fontsize=14, weight='bold')
+# Keep pie chart circular
+plt.axis('equal') 
+plt.show()
+
+# Visalise fraud by Gender and get fraud counts
+import matplotlib.pyplot as plt
+fraud_by_gender = df[df['isFraud'] == 1]['Gender'].value_counts()
+# Plot pie chart
+plt.figure(figsize=(6, 6))
+plt.pie(fraud_by_gender, labels=fraud_by_gender.index, autopct='%1.1f%%', startangle=140, colors=['pink', 'skyblue'])
+plt.title('Fraud Rate by Gender')
+plt.axis('equal')  # Equal aspect ratio ensures pie is circular
+plt.tight_layout()
+plt.show()
+
+# Visulaise fraud rate by card
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+def plot_fraud_rate(column):
+    fraud_rate = df.groupby(column)['isFraud'].mean().sort_values(ascending=False) * 100
+    fraud_df = fraud_rate.reset_index()
+    
+    plt.figure(figsize=(10, 5))
+    sns.barplot(data=fraud_df, x=column, y='isFraud', hue=column, palette="coolwarm", legend=False)
+    plt.ylabel('Fraud Rate (%)')
+    plt.title(f'Fraud Rate by {column}')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+plot_fraud_rate('Card Type')
+
+# Visualise fraud rate trend by year
+df['Date'] = pd.to_datetime(df['Date'], format='%Y-%m-%d')
+df['Year'] = df['Date'].dt.year
+# Calculate total and fraud transactions per year
+total_per_year = df.groupby('Year').size()
+fraud_per_year = df[df['isFraud'] == 1].groupby('Year').size()
+# Calculate fraud percentage per year
+fraud_rate_per_year = (fraud_per_year / total_per_year) * 100
+# Fill missing years with 0 (if no fraud in that year)
+fraud_rate_per_year = fraud_rate_per_year.reindex(range(df['Year'].min(), df['Year'].max()+1), fill_value=0)
+# Plot
+import matplotlib.pyplot as plt
+plt.figure(figsize=(10, 6))
+fraud_rate_per_year.plot(marker='o', color='red', linewidth=2)
+plt.title('Fraud Rate Trend by Year (%)')
+plt.xlabel('Year')
+plt.ylabel('Fraud Percentage')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Visualise fraud by City
+top_cities = df['City'].value_counts().nlargest(10).index
+city_fraud = df[df['City'].isin(top_cities)]
+plt.figure(figsize=(10, 5))
+sns.countplot(data=city_fraud, x='City', hue='isFraud')
+plt.xticks(rotation=45)
+plt.title('Fraud by City (Top 10)')
+plt.show()
+
+# Visualise fraud rate by transaction type
+fraud_rate = df.groupby('type')['isFraud'].mean().sort_values(ascending=False)
+fraud_rate.plot(kind='bar', color='orange', figsize=(8, 5))
+plt.title('Fraud Rate by Transaction Type')
+plt.ylabel('Fraud Rate')
+plt.xlabel('Transaction Type')
+plt.grid(axis='y')
+plt.tight_layout()
+plt.show()
