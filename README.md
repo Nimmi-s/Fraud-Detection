@@ -1,4 +1,4 @@
-This repository focuses on Exploratory Data Analysis (EDA) for a fraud detection dataset. The goal is to understand fraud patterns, identify class imbalance, and uncover trends across demographics, transaction types, geography, and time before building predictive models.
+This repository focuses on Exploratory Data Analysis (EDA) for a fraud detection dataset of credit card transactions. The goal is to understand fraud patterns, identify class imbalance, and uncover trends across demographics, transaction types, geography, and time before building predictive models.
 
 Key Visualizations & Insights
 
